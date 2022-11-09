@@ -3,14 +3,22 @@ module SimpleHubspot
     class << self
 
       def do_post(path = nil, params = {}, headers = {})
-        response = RestClient.post "#{SimpleHubspot.configuration.api_base}#{path}#{add_apikey}", params.to_json, { content_type: :json }
+        if SimpleHubspot.configuration.private_app_token.present?
+          response = RestClient.post "#{SimpleHubspot.configuration.api_base}#{path}", params.to_json, { Authorization: "Bearer #{SimpleHubspot.configuration.private_app_token}", content_type: :json }
+        else
+          response = RestClient.post "#{SimpleHubspot.configuration.api_base}#{path}#{add_apikey}", params.to_json, { content_type: :json }
+        end
         response_success response.body
       rescue RestClient::BadRequest => e
         response_fail e.response.body
       end
 
       def do_get(path = nil, params = {}, headers = {})
-        response = RestClient.get "#{SimpleHubspot.configuration.api_base}#{path}#{add_apikey}"
+        if SimpleHubspot.configuration.private_app_token.present?
+          response = RestClient.get "#{SimpleHubspot.configuration.api_base}#{path}", { Authorization: "Bearer #{SimpleHubspot.configuration.private_app_token}" }
+        else
+          response = RestClient.get "#{SimpleHubspot.configuration.api_base}#{path}#{add_apikey}"
+        end
         json = JSON.parse(response.body, symbolize_names: true)
         json.merge(success: true)
       rescue RestClient::BadRequest => e

@@ -22,11 +22,12 @@ module SimpleHubspot
   end
 
   class Configuration
-    attr_accessor :hapikey, :api_base, :portal_id, :form_submit_base
+    attr_accessor :hapikey, :api_base, :portal_id, :form_submit_base, :private_app_token
 
     def initialize
       @hapikey = ''
       @portal_id = ''
+      @private_app_token = ''
       @api_base = 'https://api.hubapi.com'
       @form_submit_base = 'https://forms.hubspot.com/uploads/form/v2/'
     end
